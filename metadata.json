@@ -1,0 +1,6 @@
+{
+  "name": "Delivery Ku",
+  "description": "Platform marketplace pesan antar makanan, minuman, kebutuhan harian, dan produk UMKM lokal Kabupaten Indramayu dengan 5 role (Superadmin, Admin, Merchant, Driver, Pelanggan) - Web PHP 8.4/MySQL InfinityFree & Companion Android App.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

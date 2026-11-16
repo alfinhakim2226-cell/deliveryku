@@ -1,0 +1,43 @@
+# Delivery Ku - Security & Clean Routing (.htaccess untuk Apache / InfinityFree)
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Aktifkan redirect otomatis ke HTTPS jika SSL sudah terpasang di InfinityFree / Cloudflare
+    # Hapus tanda # pada 4 baris di bawah ini setelah SSL aktif:
+    # RewriteCond %{HTTPS} !=on
+    # RewriteCond %{HTTP:X-Forwarded-Proto} !https
+    # RewriteCond %{HTTP_HOST} !^(localhost|127\.0\.0\.1) [NC]
+    # RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # Blokir akses langsung browser ke folder internal & file sensitif
+    RewriteRule ^(app|database|resources|routes|storage|includes)(/.*)?$ - [F,L]
+    RewriteRule ^(\.env|\.env\.example|README\.md|README_DEPLOYMENT\.md|composer\.json|composer\.lock|database\.sql)$ - [F,L]
+    RewriteRule \.(sql|log|bak|ini|sh)$ - [F,L]
+
+    # Layani file/asset publik yang ada secara langsung
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Arahkan seluruh request halaman ke front controller index.php
+    RewriteRule ^(.*)$ index.php?route=$1 [QSA,L]
+</IfModule>
+
+<FilesMatch "^\.">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set X-XSS-Protection "1; mode=block"
+</IfModule>
